@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>作业 0</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="farbtastic.js"></script>
+    <link rel="stylesheet" href="farbtastic.css" type="text/css" />
+
+    <link rel="stylesheet" href="main.css">
+    <!-- 引入所有用到的文件 -->
+    <script src='gua_utils.js'></script>
+    <script src='gua_object.js'></script>
+    <script src='gua_point.js'></script>
+    <script src='gua_size.js'></script>
+    <script src='gua_color.js'></script>
+    <script src='gua_canvas.js'></script>
+</head>
+
+<body>
+    <div class="main">
+        <canvas id="id-canvas" width="400" height="300"></canvas>
+        <div class='tools-panel'>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="move">
+                <span class="glyphicon glyphicon-move" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="pencil" data-type='pencil'>
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="line" data-type='line'>
+                <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="rect" data-type='rect'>
+                <span class="glyphicon glyphicon-retweet" aria-hidden="true"></span>
+            </button>
+            <button type="button" id=btnthick class="btn btn-default" data-toggle="popover" data-placement="right" data-html="true" title="thick" data-type='thick' data-content='
+            <div class="range range-primary">
+                <input type="range" name="range" min="1" max="20" value="10" oninput="rangePrimary.value=value; btnthick.value=value">
+                <output id="rangePrimary">10</output>
+            </div>'>
+                <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>
+            </button>
+            <button type="button" id=btncolor class="btn btn-default" data-toggle="popover" data-placement="right" data-html="true" title="color" data-type='color' data-content='
+            <form style="width: 400px;">
+                <div class="form-item">
+                    <label for="color">Color:</label>
+                    <input type="text" id="color" name="color" value="#123456" onfocus="btncolor.value=value"/>
+                </div>
+                <div id="picker"></div>
+            </form>'>
+                <span class="glyphicon glyphicon-adjust" aria-hidden="true"></span>
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+        // 函数名应该用 const 修饰, 这样不会被意外修改
+        const __main = function() {
+            let canvas = GuaCanvas.new('#id-canvas')
+            
+
+            let btns = $('.tools-panel').children()
+            btns.on('click', function(e) {
+                let t = $(e.target)
+                let btn = t.closest('button')
+                let type = btn.data('type')
+                // log('click', type)
+                if (type == 'thick') {
+                    log('change thick', btn.val())
+                    canvas.penSize = btn.val()
+                } else if (type == 'color') {
+                    log('change color')
+                    setTimeout(function(){
+                        $('#picker').farbtastic('#color');
+                    }, 10)
+                    canvas.penColor = GuaColor.create(btn.val())
+                } else {
+                    canvas.penType = btn.data('type')
+                }
+
+            })
+
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover();
+
+
+        }
+
+        __main()
+    </script>
+</body>
+
+</html>
