@@ -8,9 +8,6 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="farbtastic.js"></script>
-    <link rel="stylesheet" href="farbtastic.css" type="text/css" />
-
     <link rel="stylesheet" href="main.css">
     <!-- 引入所有用到的文件 -->
     <script src='gua_utils.js'></script>
@@ -37,23 +34,15 @@
             <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="rect" data-type='rect'>
                 <span class="glyphicon glyphicon-retweet" aria-hidden="true"></span>
             </button>
-            <button type="button" id=btnthick class="btn btn-default" data-toggle="popover" data-placement="right" data-html="true" title="thick" data-type='thick' data-content='
-            <div class="range range-primary">
-                <input type="range" name="range" min="1" max="20" value="10" oninput="rangePrimary.value=value; btnthick.value=value">
-                <output id="rangePrimary">10</output>
-            </div>'>
-                <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="button" data-type='button'>
+                <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
             </button>
-            <button type="button" id=btncolor class="btn btn-default" data-toggle="popover" data-placement="right" data-html="true" title="color" data-type='color' data-content='
-            <form style="width: 400px;">
-                <div class="form-item">
-                    <label for="color">Color:</label>
-                    <input type="text" id="color" name="color" value="#123456" onfocus="btncolor.value=value"/>
-                </div>
-                <div id="picker"></div>
-            </form>'>
-                <span class="glyphicon glyphicon-adjust" aria-hidden="true"></span>
+            <button type="button" class="btn btn-default penSelect" data-toggle="tooltip" data-placement="right" title="touch" data-type='touch'>
+                <span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span>
             </button>
+            <input type="color" data-type='penColor' data-toggle="tooltip" data-placement="right" title="penColor">
+            <input type="color" data-type='fillColor' value='#ffffff' data-toggle="tooltip" data-placement="right" title="fillColor">
+            <input type="range" min="1" max="20" value="1" id=pen-size data-toggle="tooltip" data-placement="right" title="penSize" data-type='penSize'>
 
         </div>
 
@@ -65,9 +54,10 @@
         // 函数名应该用 const 修饰, 这样不会被意外修改
         const __main = function() {
             let canvas = GuaCanvas.new('#id-canvas')
-            
 
-            let btns = $('.tools-panel').children()
+
+            let btns = $('.tools-panel').children('button')
+            let inputs = $('.tools-panel').children('input')
             btns.on('click', function(e) {
                 let t = $(e.target)
                 let btn = t.closest('button')
@@ -86,6 +76,19 @@
                     canvas.penType = btn.data('type')
                 }
 
+            })
+            inputs.on('input', function(e) {
+                let t = $(e.target)
+                let type = t.data('type')
+                log(type, t.val())
+                canvas[type] = t.val()
+                if (type == 'penColor') {
+                    canvas[type] = GuaColor.create(t.val())
+                }
+                if (type == 'penSize') {
+                    let content = t.next()
+                    content.find('.tooltip-inner').text('penSize ' + t.val())
+                }
             })
 
             $('[data-toggle="tooltip"]').tooltip();
