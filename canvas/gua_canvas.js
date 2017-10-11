@@ -18,6 +18,8 @@ class GuaCanvas extends GuaObject {
         this.penColor = GuaColor.black()
         this.start = null
         this.end = null
+        this.btns = []
+        this.currentBtn = {}
         this.setupEvents()
         this.setupInput()
     }
@@ -34,6 +36,29 @@ class GuaCanvas extends GuaObject {
                 // s.drawPoint(s.end)
                 s.drawLine(s.start, s.end, s.penColor)
             },
+            'button': function() {
+                s.drawRectByVertex(s.start, s.end, null, s.penColor, s.penSize)
+
+            },
+            'touch': function() {
+                let {x, y} = s.start
+                for (let btn of s.btns) {
+                    if (x > btn.start.x && x < btn.end.x && y > btn.start.y && y < btn.end.y) {
+                        let w = btn.end.x - btn.start.x - 2
+                        let h = btn.end.y - btn.start.y - 2
+                        let btnX = btn.start.x + 1
+                        let btnY = btn.start.y + 1
+                        s.currentBtn = {btnX, btnY, w, h}
+                        s.fillRect(btnX, btnY, w, h, GuaColor.red())
+                        s.render()
+                    }
+                }
+            },
+            'touchClear': function() {
+                let {btnX, btnY, w, h} = s.currentBtn
+                s.fillRect(btnX, btnY, w, h, GuaColor.white())
+                s.render()
+            },
         }
     }
     setupInput() {
@@ -46,6 +71,10 @@ class GuaCanvas extends GuaObject {
             s.penDown = true
             s.start = GuaPoint.new(x, y)
             s.save()
+            if (s.penType == 'touch') {
+                log(s.btns)
+                s.penEvent['touch']()
+            }
         })
         s.canvas.addEventListener('mousemove', function(event) {
             var x = event.offsetX
@@ -68,9 +97,17 @@ class GuaCanvas extends GuaObject {
             }
         })
         s.canvas.addEventListener('mouseup', function(event) {
+            if (s.penType == 'button') {
+                let btn = {start: s.start, end: s.end}
+                s.btns.push(btn)
+            }
             s.penDown = false
             s.start = null
             s.end = null
+
+            if (s.penType == 'touch') {
+                s.penEvent['touchClear']()
+            }
         })
     }
     save() {
