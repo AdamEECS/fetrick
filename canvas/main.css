@@ -23,6 +23,14 @@ canvas {
     width: 50px;
     padding: 5px;
 }
+#pen-size {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    height: 60px;
+}
+
+
+
 .range {
     display: table;
     position: relative;
